@@ -13,7 +13,7 @@ import java.util.List;
 
 public class InventoryActivity extends AppCompatActivity {
 
-    private InventoryDatabase dbHelper;
+    private InventoryViewModel viewModel;
     private InventoryRecycler adapter;
     private List<InventoryItem> items = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -24,7 +24,7 @@ public class InventoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
 
-        dbHelper = new InventoryDatabase(this);
+        viewModel = new androidx.lifecycle.ViewModelProvider(this).get(InventoryViewModel.class);
         recyclerView = findViewById(R.id.inventoryRecyclerView);
         addItemButton = findViewById(R.id.addItemButton);
 
@@ -32,7 +32,7 @@ public class InventoryActivity extends AppCompatActivity {
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
 
-        adapter = new InventoryRecycler(this, items, dbHelper);
+        adapter = new InventoryRecycler(this, items, viewModel);
         recyclerView.setAdapter(adapter);
 
         addItemButton.setOnClickListener(v -> {
@@ -53,7 +53,7 @@ public class InventoryActivity extends AppCompatActivity {
 
     // Loads the items into the list
     private void loadItems() {
-        List<InventoryItem> list = dbHelper.getAllItems();
+        List<InventoryItem> list = viewModel.getAllItems();
         adapter.updateList(list);
     }
 }

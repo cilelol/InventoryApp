@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
@@ -80,7 +81,8 @@
         android:text="Apply Changes"
         app:layout_constraintTop_toBottomOf="@id/quantityControl"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="24dp"/>
+        android:layout_marginTop="24dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/deleteButton"
@@ -89,5 +91,6 @@
         android:text="Delete"
         android:backgroundTint="#FF0000"
         app:layout_constraintTop_toBottomOf="@id/applyButton"
-        android:layout_marginTop="24dp"/>
+        android:layout_marginTop="24dp"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,12 +17,12 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
 
     private final List<InventoryItem> items;
     private final Context context;
-    private final InventoryDatabase databaseHelper;
+    private final InventoryViewModel viewModel;
 
-    public InventoryRecycler(Context context, List<InventoryItem> items, InventoryDatabase dbHelper) {
+    public InventoryRecycler(Context context, List<InventoryItem> items, InventoryViewModel viewModel) {
         this.context = context;
         this.items = items;
-        this.databaseHelper = dbHelper;
+        this.viewModel = viewModel;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,7 +55,7 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
         holder.increaseButton.setOnClickListener(v -> {
             int newQuantity = item.getQuantity() + 1;
             item.setQuantity(newQuantity);
-            databaseHelper.updateItemQuantity(item.getId(), newQuantity);
+            viewModel.updateItem(item);
             notifyItemChanged(position);
         });
 
@@ -63,7 +63,7 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
         holder.decreaseButton.setOnClickListener(v -> {
             int newQuantity = Math.max(0, item.getQuantity() - 1);
             item.setQuantity(newQuantity);
-            databaseHelper.updateItemQuantity(item.getId(), newQuantity);
+            viewModel.updateItem(item);
             notifyItemChanged(position);
             // Sends a SMS notification when stock is set to 0 through the inventory main page
             SmsHelper.sendLowStockSms(v.getContext(), item.getDescription());

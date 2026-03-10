@@ -18,6 +18,7 @@
     <EditText
         android:id="@+id/editPhone"
         android:hint="Phone Number"
+        android:height="48dp"
         android:inputType="phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
