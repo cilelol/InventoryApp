@@ -26,7 +26,7 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView description, quantity;
+        TextView description, quantity, UPC;
         Button increaseButton, decreaseButton;
         public ViewHolder(@NonNull View v) {
             super(v);
@@ -34,6 +34,7 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
             quantity = v.findViewById(R.id.itemQuantity);
             increaseButton = itemView.findViewById(R.id.increaseButton);
             decreaseButton = itemView.findViewById(R.id.decreaseButton);
+            UPC = itemView.findViewById(R.id.UPC);
         }
     }
 
@@ -48,6 +49,7 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final InventoryItem item = items.get(position);
+        holder.UPC.setText(item.getUPC());
         holder.description.setText(item.getDescription());
         holder.quantity.setText(String.valueOf(item.getQuantity()));
 
@@ -74,7 +76,7 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
         holder.itemView.setOnClickListener(v -> {
             // Opens the item details activity
             Intent intent = new Intent(context, ItemDetailsActivity.class);
-            intent.putExtra("item_id", item.getId());
+            intent.putExtra("item_UPC", item.getUPC());
             context.startActivity(intent);
         });
     }

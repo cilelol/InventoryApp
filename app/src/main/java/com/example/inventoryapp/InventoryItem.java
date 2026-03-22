@@ -2,26 +2,23 @@ package com.example.inventoryapp;
 
 // Class for each inventory item
 public class InventoryItem {
-    private int id;
+    private String UPC;
     private String description;
     private int quantity;
 
-    public InventoryItem(int id, String description, int quantity) {
-        this.id = id;
+    public InventoryItem(String UPC, String description, int quantity) {
+        this.UPC = UPC;
         this.description = description;
         this.quantity = quantity;
     }
 
-    public InventoryItem(String description, int quantity) {
-        this(-1, description, quantity);
+    // Getter for item UPC
+    public String getUPC() {
+        return UPC;
     }
-    // Getter for item ID
-    public int getId() {
-        return id;
-    }
-    // Setter for item ID
-    public void setId(int id) {
-        this.id = id;
+    // Setter for item UPC
+    public void setUPC(String UPC) {
+        this.UPC = UPC;
     }
     // Getter for item description
     public String getDescription() {

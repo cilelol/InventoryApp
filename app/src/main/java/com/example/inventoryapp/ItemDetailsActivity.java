@@ -12,10 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ItemDetailsActivity extends AppCompatActivity {
 
     private InventoryDatabase dbHelper;
-    private EditText itemDescriptionEdit;
+    private EditText itemDescriptionEdit, barcodeInput;
     private TextView itemQuantityView;
     private Button increaseButton, decreaseButton, applyButton, deleteButton;
-    private int itemId = -1;
+    private String itemUPC = null;
     private int quantity = 0;
 
     @Override
@@ -30,17 +30,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
         decreaseButton = findViewById(R.id.decreaseButton);
         applyButton = findViewById(R.id.applyButton);
         deleteButton = findViewById(R.id.deleteButton);
+        barcodeInput = findViewById(R.id.itemUPCEdit);
 
-        // Gets the item ID
-        if (getIntent() != null && getIntent().hasExtra("item_id")) {
-            itemId = getIntent().getIntExtra("item_id", -1);
+        // Gets the item UPC
+        if (getIntent() != null && getIntent().hasExtra("item_UPC")) {
+            itemUPC = getIntent().getStringExtra("item_UPC");
         }
 
         // If the item exists
-        if (itemId != -1) {
-            InventoryItem item = dbHelper.getItemById(itemId);
+        if (itemUPC != null) {
+            InventoryItem item = dbHelper.getItemByUPC(itemUPC);
             if (item != null) {
                 itemDescriptionEdit.setText(item.getDescription());
+                barcodeInput.setText(item.getUPC());
                 quantity = item.getQuantity();
                 itemQuantityView.setText(String.valueOf(quantity));
             }
@@ -76,16 +78,24 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 return;
             }
 
-            if (itemId == -1) {
-                long newId = dbHelper.addItem(desc, quantity);
-                if (newId != -1) {
+            if (itemUPC == null) {
+                String UPC = barcodeInput.getText().toString().trim();
+
+                if (UPC.isEmpty()) {
+                    Toast.makeText(this, "Please scan or enter a UPC", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                long result = dbHelper.addItem(UPC, desc, quantity);
+
+                if (result != -1) {
                     Toast.makeText(this, "Item has been added.", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     Toast.makeText(this, "Error adding this item.", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                boolean ok = dbHelper.updateItem(itemId, desc, quantity);
+                boolean ok = dbHelper.updateItem(itemUPC, desc, quantity);
                 if (ok) {
                     Toast.makeText(this, "Item has been updated.", Toast.LENGTH_SHORT).show();
                     finish();
@@ -97,8 +107,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         // Deletes the item when the delete button is pressed
         deleteButton.setOnClickListener(v -> {
-            if (itemId != -1) {
-                int deleted = dbHelper.deleteItem(itemId);
+            if (itemUPC != null) {
+                int deleted = dbHelper.deleteItem(itemUPC);
                 if (deleted > 0) {
                     Toast.makeText(this, "Item has been deleted.", Toast.LENGTH_SHORT).show();
                     finish();
@@ -107,5 +117,32 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Scanner functionality
+        barcodeInput.setOnEditorActionListener((v, actionId, event) -> {
+            // Scanning a Barcode converts the Barcode to a string, that being our UPC, so we need to get the input from the scanner as text
+            String UPC = barcodeInput.getText().toString().trim();
+            if (!UPC.isEmpty()) {
+                handleScannedBarcode(UPC);
+                barcodeInput.setText("");
+            }
+
+            return true;
+        });
+    }
+    // Scanning an item goes into the edit text UPC field
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        barcodeInput.requestFocus();
+    }
+
+    private void handleScannedBarcode(String UPC) {
+        InventoryItem item = dbHelper.getItemByUPC(UPC);
+
+        if (item != null) {
+            dbHelper.updateItem(item.getUPC(), item.getDescription(), item.getQuantity() + 1);
+        }
     }
 }

@@ -18,6 +18,17 @@
         android:ellipsize="end"
         android:singleLine="true"/>
 
+    <TextView
+        android:id="@+id/UPC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="UPC"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:ellipsize="end"
+        android:singleLine="true"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

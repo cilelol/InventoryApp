@@ -27,7 +27,7 @@ public class InventoryViewModel extends AndroidViewModel {
         repository.updateItem(item);
     }
 
-    public void deleteItem(int id) {
-        repository.deleteItem(id);
+    public void deleteItem(String UPC) {
+        repository.deleteItem(UPC);
     }
 }

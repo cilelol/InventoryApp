@@ -16,14 +16,14 @@ public class InventoryRepository {
     }
 
     public void addItem(InventoryItem item) {
-        database.addItem(item.getDescription(), item.getQuantity());
+        database.addItem(item.getUPC(), item.getDescription(), item.getQuantity());
     }
 
     public void updateItem(InventoryItem item) {
-        database.updateItem(item.getId(), item.getDescription(), item.getQuantity());
+        database.updateItem(item.getUPC(), item.getDescription(), item.getQuantity());
     }
 
-    public void deleteItem(int id) {
-        database.deleteItem(id);
+    public void deleteItem(String UPC) {
+        database.deleteItem(UPC);
     }
 }
