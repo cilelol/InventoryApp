@@ -49,7 +49,13 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         values.put(COL_DESCRIPTION, description);
         values.put(COL_QUANTITY, quantity);
 
-        return db.insert(TABLE_INVENTORY, null, values);
+        // Ensure no duplicates are inserted
+        try {
+            return db.insert(TABLE_INVENTORY, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     // Gets all items in the inventory database
@@ -99,24 +105,5 @@ public class InventoryDatabase extends SQLiteOpenHelper {
     public int deleteItem(String UPC) {
         SQLiteDatabase db = getWritableDatabase();
         return db.delete(TABLE_INVENTORY, COL_UPC + "=?", new String[]{ UPC });
-    }
-
-    // Updates the item quantity
-    public void updateItemQuantity(String UPC, int quantity) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_QUANTITY, quantity);
-        db.update(TABLE_INVENTORY, values, COL_UPC + " = ?", new String[]{UPC});
-        db.close();
-    }
-    // Ensure that UPCS are unique and not re added
-    public void addOrUpdateItem(String UPC, String description, int quantity) {
-        InventoryItem existing = getItemByUPC(UPC);
-
-        if (existing != null) {
-            updateItem(UPC, description, quantity);
-        } else {
-            addItem(UPC, description, quantity);
-        }
     }
 }

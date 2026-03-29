@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ItemDetailsActivity extends AppCompatActivity {
 
-    private InventoryDatabase dbHelper;
+    private InventoryViewModel viewModel;
     private EditText itemDescriptionEdit, barcodeInput;
     private TextView itemQuantityView;
     private Button increaseButton, decreaseButton, applyButton, deleteButton;
@@ -23,7 +23,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_details);
 
-        dbHelper = new InventoryDatabase(this);
+        viewModel = new androidx.lifecycle.ViewModelProvider(this).get(InventoryViewModel.class);
         itemDescriptionEdit = findViewById(R.id.itemDescriptionEdit);
         itemQuantityView = findViewById(R.id.itemQuantity);
         increaseButton = findViewById(R.id.increaseButton);
@@ -39,7 +39,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         // If the item exists
         if (itemUPC != null) {
-            InventoryItem item = dbHelper.getItemByUPC(itemUPC);
+            InventoryItem item = viewModel.getItemByUPC(itemUPC);
             if (item != null) {
                 itemDescriptionEdit.setText(item.getDescription());
                 barcodeInput.setText(item.getUPC());
@@ -78,44 +78,27 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 return;
             }
 
-            if (itemUPC == null) {
-                String UPC = barcodeInput.getText().toString().trim();
+            String UPC = (itemUPC == null) ? barcodeInput.getText().toString().trim() : itemUPC;
 
-                if (UPC.isEmpty()) {
-                    Toast.makeText(this, "Please scan or enter a UPC", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                long result = dbHelper.addItem(UPC, desc, quantity);
-
-                if (result != -1) {
-                    Toast.makeText(this, "Item has been added.", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "Error adding this item.", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                boolean ok = dbHelper.updateItem(itemUPC, desc, quantity);
-                if (ok) {
-                    Toast.makeText(this, "Item has been updated.", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "Error updating this item.", Toast.LENGTH_SHORT).show();
-                }
+            if (UPC.isEmpty()) {
+                Toast.makeText(this, "Please scan or enter a UPC", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            viewModel.addOrUpdateItem(UPC, desc, quantity);
+            Toast.makeText(this, "Item saved.", Toast.LENGTH_SHORT).show();
+            finish();
         });
 
         // Deletes the item when the delete button is pressed
         deleteButton.setOnClickListener(v -> {
             if (itemUPC != null) {
-                int deleted = dbHelper.deleteItem(itemUPC);
-                if (deleted > 0) {
-                    Toast.makeText(this, "Item has been deleted.", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
+                viewModel.deleteItem(itemUPC);
+                Toast.makeText(this, "Item has been deleted.", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
                     Toast.makeText(this, "Error deleting this item.", Toast.LENGTH_SHORT).show();
                 }
-            }
         });
 
         // Scanner functionality
@@ -139,10 +122,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
     private void handleScannedBarcode(String UPC) {
-        InventoryItem item = dbHelper.getItemByUPC(UPC);
+        InventoryItem item = viewModel.getItemByUPC(UPC);
 
         if (item != null) {
-            dbHelper.updateItem(item.getUPC(), item.getDescription(), item.getQuantity() + 1);
+            viewModel.updateItemQuantity(UPC, item.getQuantity() + 1);
         }
     }
 }

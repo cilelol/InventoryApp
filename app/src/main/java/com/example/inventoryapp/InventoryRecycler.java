@@ -15,7 +15,7 @@ import java.util.List;
 
 public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.ViewHolder> {
 
-    private final List<InventoryItem> items;
+    private List<InventoryItem> items;
     private final Context context;
     private final InventoryViewModel viewModel;
 
@@ -68,7 +68,9 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
             viewModel.updateItem(item);
             notifyItemChanged(position);
             // Sends a SMS notification when stock is set to 0 through the inventory main page
-            SmsHelper.sendLowStockSms(v.getContext(), item.getDescription());
+            if (newQuantity == 0) {
+                SmsHelper.sendLowStockSms(v.getContext(), item.getDescription());
+            }
             Log.d("TEST", "TEST SMS");
         });
 
@@ -88,9 +90,8 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
     }
 
     // Updates the list
-    public void updateList(List<InventoryItem> newList) {
-        items.clear();
-        items.addAll(newList);
+    public void updateList(List<InventoryItem> newItems) {
+        this.items = newItems;
         notifyDataSetChanged();
     }
 }
