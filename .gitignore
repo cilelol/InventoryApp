@@ -15,6 +15,7 @@ Thumbs.db
 
 # Logs
 *.log
+npm-debug.log*
 
 # Generated files
 captures/
@@ -28,3 +29,9 @@ captures/
 # Android build outputs
 *.apk
 *.aab
+
+# Dependencies
+node_modules/
+
+# Environment variables
+.env

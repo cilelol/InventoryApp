@@ -2,6 +2,7 @@ package com.example.inventoryapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +16,6 @@ public class InventoryActivity extends AppCompatActivity {
 
     private InventoryViewModel viewModel;
     private InventoryRecycler adapter;
-    private List<InventoryItem> items = new ArrayList<>();
     private RecyclerView recyclerView;
     private Button addItemButton;
 
@@ -32,28 +32,19 @@ public class InventoryActivity extends AppCompatActivity {
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
 
-        adapter = new InventoryRecycler(this, items, viewModel);
+        adapter = new InventoryRecycler(this, new ArrayList<>(), viewModel);
         recyclerView.setAdapter(adapter);
+
+        viewModel.setListener(items -> {
+            Log.d("DEBUG", "LISTENER FIRED SIZE = " + items.size());
+            adapter.updateList(items);
+        });
+        viewModel.refresh();
 
         addItemButton.setOnClickListener(v -> {
             // Opens item details activity so a new item can be added
             Intent intent = new Intent(InventoryActivity.this, ItemDetailsActivity.class);
             startActivity(intent);
         });
-
-        loadItems();
-    }
-
-    // On resume for when coming back from details
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadItems();
-    }
-
-    // Loads the items into the list
-    private void loadItems() {
-        List<InventoryItem> list = viewModel.getAllItems();
-        adapter.updateList(list);
     }
 }

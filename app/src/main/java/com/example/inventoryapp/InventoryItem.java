@@ -6,6 +6,10 @@ public class InventoryItem {
     private String description;
     private int quantity;
 
+    // Default constructor for Retrofit
+    public InventoryItem() {
+    }
+
     public InventoryItem(String UPC, String description, int quantity) {
         this.UPC = UPC;
         this.description = description;
@@ -15,10 +19,6 @@ public class InventoryItem {
     // Getter for item UPC
     public String getUPC() {
         return UPC;
-    }
-    // Setter for item UPC
-    public void setUPC(String UPC) {
-        this.UPC = UPC;
     }
     // Getter for item description
     public String getDescription() {

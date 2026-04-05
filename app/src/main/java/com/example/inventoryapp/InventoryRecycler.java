@@ -57,16 +57,14 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
         holder.increaseButton.setOnClickListener(v -> {
             int newQuantity = item.getQuantity() + 1;
             item.setQuantity(newQuantity);
-            viewModel.updateItem(item);
-            notifyItemChanged(position);
+            viewModel.updateItemQuantity(item.getUPC(), newQuantity);
         });
 
         // Decrease quantity of item by 1
         holder.decreaseButton.setOnClickListener(v -> {
             int newQuantity = Math.max(0, item.getQuantity() - 1);
             item.setQuantity(newQuantity);
-            viewModel.updateItem(item);
-            notifyItemChanged(position);
+            viewModel.updateItemQuantity(item.getUPC(), newQuantity);
             // Sends a SMS notification when stock is set to 0 through the inventory main page
             if (newQuantity == 0) {
                 SmsHelper.sendLowStockSms(v.getContext(), item.getDescription());
@@ -91,7 +89,8 @@ public class InventoryRecycler extends RecyclerView.Adapter<InventoryRecycler.Vi
 
     // Updates the list
     public void updateList(List<InventoryItem> newItems) {
-        this.items = newItems;
+        this.items.clear();
+        this.items.addAll(newItems);
         notifyDataSetChanged();
     }
 }

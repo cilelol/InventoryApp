@@ -15,23 +15,12 @@ public class InventoryViewModel extends AndroidViewModel {
         repository = InventoryRepository.getInstance(application);
     }
 
-    public List<InventoryItem> getAllItems() {
-        return repository.getAllItems();
-    }
-
     public InventoryItem getItemByUPC(String UPC) {
         return repository.getItemByUPC(UPC);
     }
 
     public void addOrUpdateItem(String UPC, String description, int quantity) {
         repository.addOrUpdateItem(UPC, description, quantity);
-    }
-    public void addItem(InventoryItem item) {
-        repository.addItem(item);
-    }
-
-    public void updateItem(InventoryItem item) {
-        repository.updateItem(item);
     }
 
     public void updateItemQuantity(String UPC, int quantity) {
@@ -40,5 +29,13 @@ public class InventoryViewModel extends AndroidViewModel {
 
     public void deleteItem(String UPC) {
         repository.deleteItem(UPC);
+    }
+
+    public void refresh() {
+        repository.getItemsFromAPI();
+    }
+
+    public void setListener(InventoryRepository.InventoryChangeListener listener) {
+        repository.setListener(listener);
     }
 }
